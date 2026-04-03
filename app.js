@@ -34,34 +34,11 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/', require('./routes/auth'));
-app.use('/onboarding', require('./routes/onboarding'));
+// app.use('/onboarding', require('./routes/onboarding'));
 app.use('/dashboard', require('./routes/dashboard'));
 app.use('/insights', require('./routes/insights'));
 app.use('/doctor', require('./routes/doctor'));
 app.use('/profile', require('./routes/profile'));
 
-// NEW:
-// const { loadCycleData } = require('./data/loadCycleData');
-// const { loadCycleData, getDataset } = require('./data/loadCycleData');
-// const PORT = process.env.PORT || 3000;
-
-// loadCycleData()
-//   .then(() => {
-//     app.listen(PORT, () => console.log(`Herlytics running on http://localhost:${PORT}`));
-//   })
-//   .catch(err => {
-//     console.error('Failed to load cycle dataset:', err);
-//     process.exit(1);
-//   });
-const { loadCycleData, getDataset } = require('./data/loadCycleData');
-const PORT = process.env.PORT || 3000;
-
-loadCycleData()
-  .then(() => {
-    console.log(getDataset()[0]); // prints first row of dataset
-    app.listen(PORT, () => console.log(`Herlytics running on http://localhost:${PORT}`));
-  })
-  .catch(err => {
-    console.error('Failed to load cycle dataset:', err);
-    process.exit(1);
-  });
+const port=3000;
+a
