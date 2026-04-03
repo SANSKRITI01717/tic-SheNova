@@ -1,24 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Herlytics</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
 
 <div class="page-container">
 
-  <div class="card">
-    <h2>Find a gynecologist</h2>
+  <!-- Hero -->
+  <div class="page-hero">
+    <div>
+      <h2>Find a gynecologist</h2>
+      <p>Real doctors. Real help. Near you.</p>
+    </div>
+  </div>
 
+  <!-- Search -->
+  <div class="card">
     <form action="/doctor" method="GET" class="search-form">
-      <input type="text" name="city" value="<%= cityQuery %>"
-        placeholder="Enter city (Bhopal, Indore)" />
-      <button class="btn-primary">Search</button>
+      <div class="search-row">
+        <input 
+          type="text" 
+          name="city" 
+          value="<%= cityQuery %>"
+          placeholder="Enter your city — e.g. Bhopal, Indore"
+          class="search-input"
+        />
+        <button class="btn-primary">Search</button>
+      </div>
     </form>
   </div>
 
+  <!-- Results -->
   <% if (clinics.length > 0) { %>
+
+    <div class="section-title">
+      <span class="section-dot"></span>
+      <%= clinics.length %> doctors found near <%= cityQuery %>
+    </div>
 
     <div class="doctor-grid">
       <% clinics.forEach(clinic => { %>
@@ -28,52 +43,72 @@
             <%= clinic.name.charAt(0) %>
           </div>
 
-          <div>
-            <h3><%= clinic.name %></h3>
-            <p><%= clinic.specialty %></p>
+          <div class="doctor-info">
+            <h3 class="doctor-name"><%= clinic.name %></h3>
+            <span class="doctor-specialty"><%= clinic.specialty %></span>
 
-            <p>🏥 <%= clinic.hospital %></p>
-            <p>📍 <%= clinic.address %></p>
-            <p>📞 <%= clinic.phone %></p>
+            <div class="doctor-details">
+              <div class="doctor-detail-row">
+                <span>🏥</span>
+                <span><%= clinic.hospital %></span>
+              </div>
+              <div class="doctor-detail-row">
+                <span>📍</span>
+                <span><%= clinic.address %></span>
+              </div>
+              <div class="doctor-detail-row">
+                <span>📞</span>
+                <span><%= clinic.phone %></span>
+              </div>
+            </div>
 
-            <a href="tel:<%= clinic.phone %>" class="btn-call">
-              Call
-            </a>
+            <div class="doctor-actions">
+              <a href="tel:<%= clinic.phone %>" class="btn-call">
+                Call Now
+              </a>
+              <span class="area-badge"><%= clinic.area %></span>
+            </div>
           </div>
         </div>
 
       <% }) %>
     </div>
 
+    <!-- Map -->
     <% if (lat && lng) { %>
-      <div class="card">
-        <h3>Map view</h3>
+      <div class="card map-card">
+        <h3>Map view — <%= cityQuery %></h3>
 
         <iframe
           width="100%"
-          height="350"
+          height="380"
+          style="border:none; border-radius:12px; margin-top:14px;"
           src="https://www.openstreetmap.org/export/embed.html?bbox=<%= lng-0.08 %>,<%= lat-0.08 %>,<%= lng+0.08 %>,<%= lat+0.08 %>&layer=mapnik&marker=<%= lat %>,<%= lng %>">
         </iframe>
 
-        <!-- FIXED LINK -->
-        <a href="https://www.openstreetmap.org/?mlat=<%= lat %>&mlon=<%= lng %>#map=13/<%= lat %>/<%= lng %>"
-           target="_blank">
+        <a 
+          href="https://www.openstreetmap.org/?mlat=<%= lat %>&mlon=<%= lng %>#map=13/<%= lat %>/<%= lng %>"
+          target="_blank"
+          class="map-link"
+        >
           Open full map →
         </a>
-
       </div>
     <% } %>
 
   <% } else if (cityQuery) { %>
 
-    <div class="card">
+    <!-- Empty State -->
+    <div class="card empty-card">
+      <div class="empty-icon">🔍</div>
       <h3>No results for "<%= cityQuery %>"</h3>
-      <p>Try Bhopal or Indore</p>
+      <p>We currently support Bhopal and Indore.</p>
+      <p style="font-size:13px;color:#aaa;">Try searching "Bhopal"</p>
     </div>
 
   <% } %>
 
 </div>
 
-    </body>
+</body>
 </html>
