@@ -20,7 +20,8 @@ router.get('/register', (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const { name, username, password, pin } = req.body;
+    // const { name, username, password, pin } = req.body;
+    const { name, username, password, pin, age } = req.body;
 
     // Validate username
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
@@ -39,7 +40,8 @@ router.post('/register', async (req, res) => {
       name,
       username: username.toLowerCase(),
       password: hashed,
-      pin: hashedPin
+      pin: hashedPin,
+      age: parseInt(age) || null 
     });
 
     req.session.user = { id: user._id, name: user.name, username: user.username };
