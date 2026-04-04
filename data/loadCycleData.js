@@ -6,7 +6,9 @@ let dataset = [];
 
 function loadCycleData() {
   return new Promise((resolve, reject) => {
+    // ✅ FIX: use the correct filename
     const filePath = path.join(__dirname, 'cleaned_dataset(1).csv');
+
     fs.createReadStream(filePath)
       .pipe(csv())
       .on('data', (row) => dataset.push(row))
@@ -18,16 +20,13 @@ function loadCycleData() {
   });
 }
 
-function getDataset() { return dataset; }
+function getDataset() {
+  return dataset;
+}
 
 // Compare user's cycle gap to population
 function getPopulationStats(userAvgGap) {
   if (!dataset.length) return null;
-
-  const similar = dataset.filter(row => {
-    const phase = row['Phase'] || row['phase'] || '';
-    return phase.toLowerCase().includes('menstrual');
-  });
 
   const gaps = dataset
     .map(row => parseFloat(row['study_interval'] || row['Study Interval'] || 0))
@@ -47,22 +46,23 @@ function getPopulationStats(userAvgGap) {
   };
 }
 
-// Get symptom frequency from population
+// Get symptom frequency
 function getSymptomFrequency(symptom) {
   if (!dataset.length) return null;
 
   const columnMap = {
     'stress_very_high': 'stress_level',
-    'heavy_flow':       'flow_intensity',
-    'acne':             'acne',
-    'back_pain':        'back_pain',
-    'clots':            'clots',
+    'heavy_flow': 'flow_intensity',
+    'acne': 'acne',
+    'back_pain': 'back_pain',
+    'clots': 'clots',
   };
 
   const col = columnMap[symptom];
   if (!col) return null;
 
   const total = dataset.length;
+
   const matching = dataset.filter(row => {
     const val = (row[col] || '').toLowerCase();
     return val === 'high' || val === 'yes' || val === 'true' || val === '1';
@@ -71,4 +71,9 @@ function getSymptomFrequency(symptom) {
   return total ? Math.round((matching / total) * 100) : null;
 }
 
-module.exports = { loadCycleData, getDataset, getPopulationStats, getSymptomFrequency };
+module.exports = {
+  loadCycleData,
+  getDataset,
+  getPopulationStats,
+  getSymptomFrequency
+};

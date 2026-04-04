@@ -14,19 +14,20 @@ mongoose.connect(process.env.MONGO_URI)
 // Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session (stored in memory - perfect for hackathon)
+// Session
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'fallback_secret',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }));
 
-// Make user available in all views
+// Make user available globally
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   next();
@@ -40,26 +41,16 @@ app.use('/insights', require('./routes/insights'));
 app.use('/doctor', require('./routes/doctor'));
 app.use('/profile', require('./routes/profile'));
 
-// NEW:
-// const { loadCycleData } = require('./data/loadCycleData');
-// const { loadCycleData, getDataset } = require('./data/loadCycleData');
-// const PORT = process.env.PORT || 3000;
-
-// loadCycleData()
-//   .then(() => {
-//     app.listen(PORT, () => console.log(`Herlytics running on http://localhost:${PORT}`));
-//   })
-//   .catch(err => {
-//     console.error('Failed to load cycle dataset:', err);
-//     process.exit(1);
-//   });
+// Start server AFTER dataset load
 const { loadCycleData, getDataset } = require('./data/loadCycleData');
 const PORT = process.env.PORT || 3000;
 
 loadCycleData()
   .then(() => {
-    console.log(getDataset()[0]); // prints first row of dataset
-    app.listen(PORT, () => console.log(`Herlytics running on http://localhost:${PORT}`));
+    console.log("Sample dataset row:", getDataset()[0]);
+    app.listen(PORT, () => {
+      console.log(`Herlytics running on http://localhost:${PORT}`);
+    });
   })
   .catch(err => {
     console.error('Failed to load cycle dataset:', err);
